@@ -296,14 +296,12 @@ async def remove_bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == "__main__":
 
-    # Get the Telegram API Token from token.txt
-    try:
-        with open("token.txt") as f:
-            lines = f.readlines()
-            token = lines[0].replace("\n", "")
-    except Exception as e:
+
+    token = os.getenv("TELEGRAM_API_TOKEN")
+
+    if not token:
         print(
-            f"something went wrong while trying to read 'token.txt', please make sure that the file is in located in the working directory: {os.getcwd()}\n {e}"
+            f"Something went wrong while trying to read the Telegram API Token from environment variable. Please make sure the 'TELEGRAM_API_TOKEN' environment variable is set."
         )
         raise SystemExit
 
