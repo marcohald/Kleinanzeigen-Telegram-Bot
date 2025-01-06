@@ -1,0 +1,7 @@
+version: '3'
+services:
+  kleinanzeigen:
+    build: .
+    environment:
+      - TELEGRAM_API_TOKEN=myToken
+    restart: always
