@@ -13,3 +13,4 @@ sniffio
 soupsieve
 typing-extensions
 python-telegram-bot[job-queue]
+requests
