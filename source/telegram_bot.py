@@ -4,8 +4,10 @@ from functools import reduce
 from typing import Dict
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
-from kleinanzeigenbot import KleinanzeigenBot
+#from kleinanzeigenbot import KleinanzeigenBot
+from kleinanzeigenbot_api import KleinanzeigenBot
 from chat_client import ChatClient
+from kleinanzeigen_client import KleinanzeigenClient
 
 
 registered_bots_dict: Dict[int, ChatClient] = {}
@@ -50,7 +52,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     :param update: [TODO:description]
     :param context: [TODO:description]
     """
-
+    logging.info("Received start")
     message = f"""Welcome. Available commands are:
 
     /start -- Show this message
@@ -151,6 +153,8 @@ async def add_bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     :param update: the current update
     :param context: the current context
     """
+
+    logging.info("add_bot start")
     chatClient = await get_chat_client(update, context)
     if chatClient == None:
         return
@@ -170,8 +174,9 @@ async def add_bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    bot = KleinanzeigenBot(args[1], args[0])
 
+    bot = KleinanzeigenBot(args[1], args[0], api)
+    
     if bot.invalid_link_flag:
         await bot_respond(update, context, "something went wrong, link is not valid!")
         return
@@ -179,6 +184,8 @@ async def add_bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chatClient.add_bot(bot)
 
     await bot_respond(update, context, f"added new bot: {bot.name}, with {bot.num_items()} items registered.")
+
+    logging.info("add_bot end")
 
 
 async def add_filter(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -298,10 +305,22 @@ if __name__ == "__main__":
 
 
     token = os.getenv("TELEGRAM_API_TOKEN")
+    api_user = os.getenv("KLEINANZEIGEN_API_USER")
+    api_pw = os.getenv("KLEINANZEIGEN_API_PW")
 
     if not token:
         print(
             f"Something went wrong while trying to read the Telegram API Token from environment variable. Please make sure the 'TELEGRAM_API_TOKEN' environment variable is set."
+        )
+        raise SystemExit
+    if not api_user:
+        print(
+            f"Something went wrong while trying to read the Kleinanzeigen API User from environment variable. Please make sure the 'KLEINANZEIGEN_API_USER' environment variable is set."
+        )
+        raise SystemExit
+    if not api_pw:
+        print(
+            f"Something went wrong while trying to read the Kleinanzeigen API Password from environment variable. Please make sure the 'KLEINANZEIGEN_API_PW' environment variable is set."
         )
         raise SystemExit
 
@@ -309,6 +328,7 @@ if __name__ == "__main__":
 
     application = ApplicationBuilder().token(token).build()
     job_queue = application.job_queue
+    api = KleinanzeigenClient(api_user, api_pw, '', '')
 
     start_handler = CommandHandler("start", start)
     start_bots_handler = CommandHandler("start_bots", start_bots)
