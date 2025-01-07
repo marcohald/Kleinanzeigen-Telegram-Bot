@@ -1,7 +1,8 @@
 from typing import List
 
 from telegram.ext import ContextTypes, Job
-from kleinanzeigenbot import KleinanzeigenBot, KleinanzeigenItem
+# from kleinanzeigenbot import KleinanzeigenBot, KleinanzeigenItem
+from kleinanzeigenbot_api import KleinanzeigenBot, KleinanzeigenItem
 
 
 class ChatClient:
