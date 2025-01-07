@@ -71,7 +71,7 @@ class ChatClient:
                 if not a.check_filters(self.filters):
                     continue
                 message = (
-                    f"<b>{a.title}</b>\n{a.price} -- <i>{a.location}</i>\nhttps://www.kleinanzeigen.de{a.url}\n<i>search: {bot.name}</i>"
+                    f"<b>{a.title}</b>\n{a.price} -- <i>{a.location}</i>\n{a.url}\n<i>search: {bot.name}</i>"
                 )
                 await context.bot.send_message(chat_id=self.id, text=message, parse_mode="HTML")
 
